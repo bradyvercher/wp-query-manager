@@ -1,6 +1,6 @@
 # WP Query Manager #
 
-*Note:* This plugin is incomplete. Although it should be functional, it lacks polish and documentation at this point. If it looks like it might be useful, feel free to get in touch and I'll try to dedicate some time to finishing it up. I originally considered using this for experimenting and demonstrating various techniques, but have removed much of the code in order to make it functional and push out an early concept.*
+*Note: This plugin is incomplete. Although it should be functional, it lacks polish and documentation at this point. If it looks like it might be useful, feel free to get in touch and I'll try to dedicate some time to finishing it up. I originally considered using this for experimenting and demonstrating various techniques, but have removed much of the code in order to make it functional and push out an early concept.*
 
 **So what exactly is WP Query Manager?**
 
@@ -16,4 +16,4 @@ Like I siad, the docs are pretty much non-existent at the moment, so get in touc
 
 Built by Brady Vercher ([@bradyvercher](http://twitter.com/bradyvercher))
 
-Copyright 2012  Blazer Six, Inc.(http://www.blazersix.com/) ([@blazersix](http://twitter.com/BlazerSix))
+Copyright 2012  Blazer Six, Inc.(http://www.blazersix.com/) ([@BlazerSix](http://twitter.com/BlazerSix))
