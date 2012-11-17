@@ -154,7 +154,7 @@ class Blazer_Six_WP_Query_Manager {
 		if ( is_author() ) {
 			$author = null;
 			if ( ! $author ) {
-				$author = get_user_by( 'slug', get_query_var( 'author_name' ) );
+				$author = get_user_by( 'slug', $query->get( 'author_name' ) );
 				$author = $author->data;
 			}
 			
@@ -166,7 +166,7 @@ class Blazer_Six_WP_Query_Manager {
 		}
 		
 		if ( is_post_type_archive() ) {
-			$post_type = get_query_var( 'post_type' );
+			$post_type = $query->get( 'post_type' );
 			
 			$indices[] = 'post_type_' . $post_type;
 			$indices[] = 'post_type';
