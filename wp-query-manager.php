@@ -53,43 +53,43 @@ class Blazer_Six_WP_Query_Manager {
 	}
 	
 	function parse_query( $query ) {
-		if ( $query->is_main_query() ) {
-			self::$indices = self::get_index_stems();
-			self::$options = get_option( 'wp_query_manager' );
-			
-			if ( ! is_admin() && is_array( self::$indices ) ) {
-				if ( ! is_feed() && isset( self::$options['queries'] ) ) {
-					add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ) );
-				} elseif ( is_feed() && isset( self::$options['feed_queries'] ) ) {
-					add_filter( 'pre_option_posts_per_rss', array( __CLASS__, 'pre_option_filter' ) );
-					add_filter( 'pre_option_rss_use_excerpt', array( __CLASS__, 'pre_option_filter' ) );
-					add_filter( 'excerpt_length', array( __CLASS__, 'feed_excerpt_length' ) );
-				}
+		self::$indices = self::get_index_stems( $query );
+		self::$options = get_option( 'wp_query_manager' );
+		
+		if ( ! is_admin() && is_array( self::$indices ) ) {
+			if ( ! is_feed() && isset( self::$options['queries'] ) ) {
+				add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ) );
+			} elseif ( is_feed() && isset( self::$options['feed_queries'] ) ) {
+				add_filter( 'pre_option_posts_per_rss', array( __CLASS__, 'pre_option_filter' ) );
+				add_filter( 'pre_option_rss_use_excerpt', array( __CLASS__, 'pre_option_filter' ) );
+				add_filter( 'excerpt_length', array( __CLASS__, 'feed_excerpt_length' ) );
 			}
 		}
 	}
 	
 	function pre_get_posts( $query ) {
-		$opts = ( isset( self::$options['queries'] ) ) ? self::$options['queries'] : array( array() );
-		$set_vars = array();
-		
-		// build the array of query vars
-		foreach ( self::$indices as $index ) {
-			if ( isset( $opts[ $index ] ) ) {
-				$set_vars = wp_parse_args( $set_vars, $opts[ $index ] );
+		if ( $query->is_main_query() ) {
+			$opts = ( isset( self::$options['queries'] ) ) ? self::$options['queries'] : array( array() );
+			$set_vars = array();
+			
+			// build the array of query vars
+			foreach ( self::$indices as $index ) {
+				if ( isset( $opts[ $index ] ) ) {
+					$set_vars = wp_parse_args( $set_vars, $opts[ $index ] );
+				}
 			}
-		}
-		
-		// unset vars that don't pertain to the query
-		unset( $set_vars['admin_data'] );
-		
-		if ( is_archive() && isset( $set_vars['posts_per_page'] ) ) {
-			$set_vars['posts_per_archive_page'] = $set_vars['posts_per_page'];
-			unset( $set_vars['posts_per_page'] );
-		}
-		
-		foreach( $set_vars as $key => $var ) {
-			$query->set( $key, $var );
+			
+			// unset vars that don't pertain to the query
+			unset( $set_vars['admin_data'] );
+			
+			if ( is_archive() && isset( $set_vars['posts_per_page'] ) ) {
+				$set_vars['posts_per_archive_page'] = $set_vars['posts_per_page'];
+				unset( $set_vars['posts_per_page'] );
+			}
+			
+			foreach( $set_vars as $key => $var ) {
+				$query->set( $key, $var );
+			}
 		}
 	}
 	
@@ -135,13 +135,13 @@ class Blazer_Six_WP_Query_Manager {
 	/**
 	 * Get index stems
 	 */
-	function get_index_stems() {
+	function get_index_stems( $query ) {
 		$indices = array();
 		
 		// build an array of index stems
 		if ( is_search() ) $indices[] = 'search';
 		if ( is_home() ) $indices[] = 'home';
-		if ( is_front_page() ) $indices[] = 'front_page';
+		if ( 'page' == get_option( 'show_on_front' ) && $query->get( 'page_id' ) == get_option( 'page_on_front' ) ) $indices[] = 'front_page';
 		
 		if ( is_category() || is_tag() || is_tax() ) {
 			$term = get_queried_object();
